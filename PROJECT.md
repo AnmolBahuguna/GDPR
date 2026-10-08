@@ -204,7 +204,7 @@ Open the local URL printed by Vite. The demo workspace is seeded as authenticate
 
 The browser calls `/api/chat`; it does not receive the key. `vite.config.ts` registers a development-server middleware that validates the request, adds a system instruction, and sends the request to `https://openrouter.ai/api/v1/chat/completions`. It accepts POST requests with up to 20 user or assistant messages, limited to 4,000 characters each, and rejects request bodies above 32 KB. The middleware requests up to 700 completion tokens.
 
-The middleware is available in Vite's development server only. A production deployment must provide an equivalent authenticated server-side endpoint and store the key as a server secret. Do not place an API key in frontend code or commit `.env.local`.
+Vercel production builds use `api/chat.js` for the same server-side endpoint; `vercel.json` configures the Vite output and function. Set `OPENROUTER_API_KEY` and optionally `OPENROUTER_MODEL` in Vercel project environment variables, then redeploy. Keep the key server-side and never commit `.env.local`.
 
 ## Build and code quality commands
 

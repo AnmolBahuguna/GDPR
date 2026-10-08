@@ -613,7 +613,16 @@ function AssistantScreen() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ messages: nextMessages.slice(-10), context: workspaceContext }),
       });
-      const result = await response.json() as { reply?: string; error?: string };
+      const responseText = await response.text();
+      let result: { reply?: string; error?: string };
+      try {
+        result = JSON.parse(responseText) as { reply?: string; error?: string };
+      } catch {
+        if (response.status === 404) {
+          throw new Error('The deployed chat API is missing. Redeploy with the Vercel api/chat function included.');
+        }
+        throw new Error(`Chat API returned a non-JSON response (HTTP ${response.status}). Confirm the Vercel function is deployed and try again.`);
+      }
       if (!response.ok) throw new Error(result.error || 'The assistant could not answer. Please try again.');
       if (!result.reply) throw new Error('OpenRouter returned an empty response. Please try again.');
       setMessages([...nextMessages, { role: 'assistant', content: result.reply }]);

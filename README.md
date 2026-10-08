@@ -17,4 +17,6 @@ npm run dev
 
 Chat requests pass through a Vite server middleware at `/api/chat`; the key stays on the server side. The default model is OpenRouter Auto Router (`openrouter/auto`). Set `OPENROUTER_MODEL` in `.env.local` to select another OpenRouter model.
 
-The middleware is for local development. Production hosting needs the same `/api/chat` handler deployed as a serverless function or backend endpoint, with `OPENROUTER_API_KEY` configured as a server secret.
+For Vercel deployments, `api/chat.js` provides the production `/api/chat` serverless function and `vercel.json` configures the Vite build. In the Vercel project, add `OPENROUTER_API_KEY` under **Settings > Environment Variables** (Production and Preview as needed), optionally add `OPENROUTER_MODEL`, then redeploy. Never use a `VITE_` prefix for the key; it must stay server-side.
+
+The Vite middleware is for local development. The client reports a clear message if a deployment serves an HTML 404 page instead of the chat API JSON.
