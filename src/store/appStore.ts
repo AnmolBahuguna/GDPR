@@ -19,7 +19,7 @@ type AppStore = InitialAppState & {
 
 const createInitialState = (): InitialAppState => ({
   ...structuredClone(seedState),
-  profile: { name: seedState.workspace.user, role: 'Compliance Lead' },
+  profile: { name: seedState.workspace.user, role: 'Marketplace Operations' },
 });
 
 export const useAppStore = create<AppStore>((set) => ({
