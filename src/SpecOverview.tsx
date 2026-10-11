@@ -121,7 +121,16 @@ type MarketplaceData = {
 
 async function fetchMarketplaceData(refresh: boolean, page: number, signal: AbortSignal): Promise<MarketplaceData> {
   const response = await fetch(`/api/marketplace?page=${page}${refresh ? '&refresh=1' : ''}`, { signal })
-  const result = await response.json() as { data?: MarketplaceData; error?: string }
+  const responseText = await response.text()
+  let result: { data?: MarketplaceData; error?: string }
+  try {
+    result = JSON.parse(responseText) as { data?: MarketplaceData; error?: string }
+  } catch {
+    if (response.status === 404) {
+      throw new Error('The production marketplace API is missing. Deploy the api/marketplace.js function and redeploy the site.')
+    }
+    throw new Error(`Marketplace API returned a non-JSON response (HTTP ${response.status}). Check the production API deployment and retry.`)
+  }
   if (!response.ok || !result.data) {
     throw new Error(result.error || 'Could not load live ZenAuraa practitioner data.')
   }
